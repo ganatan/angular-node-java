@@ -46,7 +46,7 @@ export class AiService {
       );
   }
 
-  generateVoice(llm: string, name: string): Observable<VoiceGenerationResponse> {
+  generateVoice(llm: string, name: string, tts = 'elevenlabs'): Observable<VoiceGenerationResponse> {
     if (environment.useMock) {
       const safeName = name.toLowerCase().replace(/\s+/g, '-');
       const voiceMockPath = `assets/voices/${safeName}-${llm}.mp3`;
@@ -57,7 +57,7 @@ export class AiService {
       }).pipe(delay(1000));
     }
 
-    const url = `${this.baseUrl}/voice/${llm}`;
+    const url = `${this.baseUrl}/voice/${llm}?tts=${encodeURIComponent(tts)}`;
     const body = { name };
 
     return this.http.post<VoiceGenerationResponse>(url, body).pipe(

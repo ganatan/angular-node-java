@@ -10,6 +10,7 @@ const aiServices = {
 
   tts: [
     { type: 'elevenlabs', label: 'ElevenLabs', purpose: 'High-quality voice synthesis from text, multilingual' },
+    { type: '60db', label: '60dB', purpose: 'Voice synthesis and cloning from text, multilingual' },
   ],
 
   avatar: [

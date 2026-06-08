@@ -15,18 +15,24 @@
         <option value="summary">Résumé de film</option>
       </select>
     </div>
-    <div class="col-12 col-lg-3">
+    <div class="col-12 col-lg-2">
       <label class="form-label" for="style">Style</label>
       <select class="form-select" [(ngModel)]="style" (ngModelChange)="onStyleChange($event)" [disabled]="useMock">
         <option *ngFor="let s of styleOptions" [value]="s.value">{{ s.label }}</option>
       </select>
     </div>
-    <div class="col-12 col-lg-3">
+    <div class="col-12 col-lg-2">
       <label class="form-label" for="length">Longueur</label>
       <select class="form-select" [(ngModel)]="length" (ngModelChange)="onLengthChange($event)" [disabled]="useMock">
         <option value="short">Courte</option>
         <option value="medium">Moyenne</option>
         <option value="long">Longue</option>
+      </select>
+    </div>
+    <div class="col-12 col-lg-2">
+      <label class="form-label" for="tts">Voix (TTS)</label>
+      <select class="form-select" [(ngModel)]="tts" (ngModelChange)="onTtsChange($event)">
+        <option *ngFor="let t of ttsOptions" [value]="t.value">{{ t.label }}</option>
       </select>
     </div>
   </div>
@@ -79,7 +85,7 @@
       </div>
       <div class="card p-4 m-1">
         <div class="d-flex justify-content-between align-items-center mb-3 btn-group-responsive">
-          <button class="btn btn-outline-primary" (click)="loadVoice('chatgpt')">Voix - ElevenLabs</button>
+          <button class="btn btn-outline-primary" (click)="loadVoice('chatgpt')">Voix - {{ ttsLabel }}</button>
           <span *ngIf="voiceChatgpt && !voiceChatgptLoading" class="badge bg-primary">Voix OK ✓</span>
           <span *ngIf="voiceChatgptDuration > 0" class="text-primary ms-auto small-text">Réponse en {{
             voiceChatgptDuration.toFixed(1) }}s</span>
@@ -96,12 +102,12 @@
           </div>
           <div class="mt-3">
             <div *ngIf="voiceChatgptLoading" class="alert alert-info alert-dismissible fade show" role="alert">
-              📨 Requête envoyée à ElevenLabs...
+              📨 Requête envoyée à {{ ttsLabel }}...
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
             </div>
             <div *ngIf="voiceChatgptLoading && !voiceChatgpt && !voiceChatgptError"
               class="alert alert-warning alert-dismissible fade show" role="alert">
-              ⏳ Réponse de ElevenLabs en cours de traitement...
+              ⏳ Réponse de {{ ttsLabel }} en cours de traitement...
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
             </div>
             <div *ngIf="voiceChatgptError" class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -110,7 +116,7 @@
             </div>
             <div *ngIf="voiceChatgpt && !voiceChatgptError" class="alert alert-success alert-dismissible fade show"
               role="alert">
-              ✅ Réponse de ElevenLabs reçue avec succès.
+              ✅ Réponse de {{ ttsLabel }} reçue avec succès.
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
             </div>
           </div>
@@ -171,7 +177,7 @@
 
       <div class="card p-4 m-1">
         <div class="d-flex justify-content-between align-items-center mb-3 btn-group-responsive">
-          <button class="btn btn-outline-success" (click)="loadVoice('claude')">Voix - ElevenLabs</button>
+          <button class="btn btn-outline-success" (click)="loadVoice('claude')">Voix - {{ ttsLabel }}</button>
           <span *ngIf="voiceClaude && !voiceClaudeLoading" class="badge bg-success">Voix OK ✓</span>
           <span *ngIf="voiceClaudeDuration > 0" class="text-success ms-auto small-text">Réponse en {{
             voiceClaudeDuration.toFixed(1) }}s</span>
@@ -188,12 +194,12 @@
           </div>
           <div class="mt-3">
             <div *ngIf="voiceClaudeLoading" class="alert alert-info alert-dismissible fade show" role="alert">
-              📨 Requête envoyée à ElevenLabs...
+              📨 Requête envoyée à {{ ttsLabel }}...
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
             </div>
             <div *ngIf="voiceClaudeLoading && !voiceClaude && !voiceClaudeError"
               class="alert alert-warning alert-dismissible fade show" role="alert">
-              ⏳ Réponse de ElevenLabs en cours de traitement...
+              ⏳ Réponse de {{ ttsLabel }} en cours de traitement...
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
             </div>
             <div *ngIf="voiceClaudeError" class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -202,7 +208,7 @@
             </div>
             <div *ngIf="voiceClaude && !voiceClaudeError" class="alert alert-success alert-dismissible fade show"
               role="alert">
-              ✅ Réponse de ElevenLabs reçue avec succès.
+              ✅ Réponse de {{ ttsLabel }} reçue avec succès.
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
             </div>
           </div>
