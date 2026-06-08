@@ -20,6 +20,7 @@ export class App {
   type = 'biography';
   style = 'neutral';
   length = 'short';
+  tts = 'elevenlabs';
 
   contentChatgpt = '';
   contentClaude = '';
@@ -67,6 +68,15 @@ export class App {
     { value: 'scientific', label: 'Scientifique' },
     { value: 'technical', label: 'Technique' },
   ];
+
+  ttsOptions = [
+    { value: 'elevenlabs', label: 'ElevenLabs' },
+    { value: '60db', label: '60dB' },
+  ];
+
+  get ttsLabel(): string {
+    return this.ttsOptions.find((o) => o.value === this.tts)?.label || 'ElevenLabs';
+  }
 
   private aiService = inject(AiService);
 
@@ -155,7 +165,7 @@ export class App {
     }
 
     this.aiService
-      .generateVoice(llm, this.name)
+      .generateVoice(llm, this.name, this.tts)
       .subscribe((response: VoiceGenerationResponse) => {
         const duration = (performance.now() - start) / 1000;
         clearInterval(interval);
@@ -185,6 +195,16 @@ export class App {
   onLengthChange(value: string) {
     this.length = value;
     this.resetAll();
+  }
+
+  onTtsChange(value: string) {
+    this.tts = value;
+    this.voiceChatgpt = '';
+    this.voiceClaude = '';
+    this.voiceChatgptError = null;
+    this.voiceClaudeError = null;
+    this.voiceChatgptDuration = 0;
+    this.voiceClaudeDuration = 0;
   }
 
   onTypeChange(value: string) {

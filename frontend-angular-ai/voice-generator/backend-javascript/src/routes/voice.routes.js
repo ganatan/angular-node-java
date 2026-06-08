@@ -4,7 +4,8 @@ import path from 'path';
 import dotenv from 'dotenv';
 
 import testElevenLabs from '../services/voice/test-elevenlabs.js';
-import generateVoice from '../services/voice/voice.service.js';
+import generateVoiceElevenLabs from '../services/voice/voice.service.js';
+import generateVoiceSixtyDb from '../services/voice/sixtydb.service.js';
 import generateVoiceMock from '../mocks/voice/voice.mock.js';
 
 dotenv.config();
@@ -16,11 +17,28 @@ function safeFilename(name, llm) {
   return `${name.toLowerCase().replace(/\s+/g, '-')}-${llm}`;
 }
 
+function getTtsProvider(tts) {
+  const providers = {
+    elevenlabs: {
+      real: generateVoiceElevenLabs,
+      voiceId: () => process.env.ELEVENLABS_VOICE_ID || '21m00Tcm4TlvDq8ikWAM',
+    },
+    '60db': {
+      real: generateVoiceSixtyDb,
+      voiceId: () => process.env.SIXTYDB_VOICE_ID || '',
+    },
+  };
+
+  return providers[tts] || providers.elevenlabs;
+}
+
 router.post('/:llm', async (req, res) => {
   const { llm } = req.params;
   const { name } = req.body;
 
-  const voiceId = process.env.ELEVENLABS_VOICE_ID || '21m00Tcm4TlvDq8ikWAM';
+  const tts = (req.query.tts || 'elevenlabs').toLowerCase();
+  const provider = getTtsProvider(tts);
+  const voiceId = provider.voiceId();
   const fileName = safeFilename(name, llm);
 
   const audioPath = path.join(process.cwd(), 'storage', 'voices', `${fileName}.mp3`);
@@ -47,8 +65,8 @@ router.post('/:llm', async (req, res) => {
       await generateVoiceMock(text, voiceId, audioPath);
       console.log('🟡 TTS MOCK -', audioPath);
     } else {
-      await generateVoice(text, voiceId, audioPath);
-      console.log('✅ TTS réel -', audioPath);
+      await provider.real(text, voiceId, audioPath);
+      console.log(`✅ TTS réel (${tts}) -`, audioPath);
     }
 
     const publicPath = `/storage/voices/${fileName}.mp3`;
